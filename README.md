@@ -1,2 +1,1 @@
-# SchoolDatabase-Repo
-Practice Queries in Django
+# DjangoQueryingLab_PY_Starter
