@@ -1,8 +1,10 @@
+from datetime import date
 from django.shortcuts import render
 from django.db.models import Count
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Student, Instructor, Course, StudentCourse
 from .const_data import view_information
+
 
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -58,8 +60,13 @@ SELECT `school_db_student`.`id`,
 # Order the data by highest GPAs first (descending).
 # Print out each student's full name and gpa to the terminal
 def problem_one(request):
+  students_3gpa = Student.objects.filter(gpa__gt = 3.0).order_by('-gpa')
 
-    return complete(request)
+  for student in students_3gpa:
+    print(
+            f'Full Name: {student.first_name} {student.last_name} GPA: {student.gpa}')
+     
+  return complete(request)
 
 
 # Supporting Query Method Documentation:
@@ -97,7 +104,11 @@ SELECT `school_db_student`.`id`,
 # Order by hire date ascending
 # Print out the instructor's full name and hire date to the terminal
 def problem_two(request):
-
+    instructors = Instructor.objects.filter(hire_date__year__lt= 2010).order_by("-hire_date")
+    for instructor in instructors:
+       print(
+          f'\nFull Name {instructor.first_name} {instructor.last_name} \n Hire Date: {instructor.hire_date}'
+       )
     return complete(request)
 
 
@@ -138,7 +149,15 @@ SELECT `school_db_instructor`.`id`,
 # Print the instructors name and courses that he belongs to in the terminal
 # (Do not hard code his name in the print)
 def problem_three(request):
-
+    courses_by_insructor_2 = Course.objects.filter(instructor = 2)
+    instructor_2 = Instructor.objects.get(id = 2)
+    print(
+        f"Instructor Name: {instructor_2.first_name} {instructor_2.last_name} \nCourses:"
+      )
+    for course in courses_by_insructor_2:
+      print(
+        f"   -{course.name}"
+      )
     return complete(request)
 
 
@@ -184,6 +203,12 @@ SELECT `school_db_instructor`.`id`,
 
 # Get the count of students, courses, and instructors and print them in the terminal
 def problem_four(request):
+    total_students = Student.objects.count()
+    total_courses = Course.objects.count()
+    total_instructors = Instructor.objects.count()
+    print(
+      f'Students Count:{total_students}\nCourses Count:{total_courses}\nInstructors Count: {total_instructors}'
+    )
 
     return complete(request)
 
@@ -228,7 +253,10 @@ SELECT COUNT(*) AS `__count`
 # Print the new student's id, full name, year, and gpa to the terminal
 # NOTE every time you execute this function a duplicate student will be created with a different primary key number
 def problem_five(request):
-
+    student = Student.objects.create(first_name = 'Rick', last_name = 'Lyman', year = 1989, gpa = 3.95)
+    print(
+      f'Student ID: {student.id}\nFull Name:{student.first_name} {student.last_name}\nBirth Year: {student.year}\nGPA:{student.gpa}'
+    )
     return complete(request)
 
 
@@ -260,6 +288,12 @@ VALUES ('Kyle', 'Harwood', 2022, 3.0)
 # Then query the studets table to get that student by their id
 # Print the new student's id, full name, and gpa to the terminal
 def problem_six(request):
+    Student.objects.get(id =10).update(gpa = 2.75)
+    student = Student.objects.get(id=10)
+    print(
+      f'Student ID: {student.id}\nFull Name:{student.first_name} {student.last_name}\nGPA:{student.gpa}'
+
+    )
 
     # Make sure to set this equal to the primary key of the row you just created!
     student_id = 11
@@ -307,7 +341,7 @@ LIMIT 21
 # Delete the student that you have created and updated
 # Check your MySQL Workbench to confirm the student is no longer in the table!
 def problem_seven(request):
-
+    Student.objects.filter(id =11).delete()
     # Make sure to set this equal to the primary key of the row you just created!
     student_id = 11
 
@@ -366,7 +400,7 @@ SELECT `school_db_student`.`id`,
 # Find all of the instructors that only belong to a single course
 # Print out the instructors full name and number of courses to the console
 def bonus_problem(request):
-
+    instructors = Course.objects.filter(Instructor)
     return complete(request)
 
 
