@@ -400,10 +400,16 @@ SELECT `school_db_student`.`id`,
 # Find all of the instructors that only belong to a single course
 # Print out the instructors full name and number of courses to the console
 def bonus_problem(request):
-    instructors = Course.objects.filter(Instructor)
-    return complete(request)
+    # instructors = Instructor.objects.annotate(num_of_courses = Count('course')).filter(num_of_courses = 1)
+    # print(instructors)
+    # for instructor in instructors:
+    #   print(f'Instructor name: {instructor.first_name} {instructor.last_name}, Number of Courses: {num_of_courses}' ) 
+    # return complete(request)
+  instructors_w_1_course = Instructor.objects.annotate(course_count=Count('course')).filter(course_count = 1)
 
-
+  for instructor in instructors_w_1_course:
+      print(f'Instructor name: {instructor.first_name} {instructor.last_name}, Number of Courses: {instructor.course_count}' ) 
+  return complete(request)
 # Supporting Query Method Documentation:
 """
 https://docs.djangoproject.com/en/4.0/topics/db/aggregation/
